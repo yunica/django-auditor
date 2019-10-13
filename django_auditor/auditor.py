@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from copy import deepcopy
 from django.conf import settings
 
+
 class Audit:
     def __init__(self, request, obj):
         self.original_object = deepcopy(obj)
@@ -22,7 +23,7 @@ class Audit:
         audit.object_id = self.original_object.pk
         audit.user = self.user
         audit.action = action
-        audit.content_object = self.original_object
+        audit.content_object = self.original_object.__str__()
         audit.tenant = self.tenant
         if field:
             audit.field = field
@@ -30,7 +31,7 @@ class Audit:
 
     def create(self):
         self.create_audit(action='CREATE')
-        
+
     def delete(self):
         self.create_audit(action='DELETE')
 
@@ -40,7 +41,7 @@ class Audit:
         particular change
         """
         self.create_audit(action=action, field=field)
-        
+
     def update(self, modified_object=False):
         """
         Although the modified_object argument is optional,
@@ -66,11 +67,13 @@ class Audit:
             except:
                 audit_field = False
 
-            if (audit_field and
-                field.name != 'id' and
-                (original_value != modified_value) and not
-                ((original_value is None and modified_value == '') or
-                    (original_value == '' and modified_value is None))):
+            has_change = (audit_field and
+                          field.name != 'id' and
+                          (original_value != modified_value) and not
+                          ((original_value is None and modified_value == '') or
+                           (original_value == '' and modified_value is None)))
+
+            if has_change:
                 """
                 Check if fields values are different (id field excluded)
                 Don't audit if value change from None to '' or '' to None
@@ -86,11 +89,11 @@ class Audit:
                 except:
                     continue
 
-                audit.content_object = self.modified_object
+                audit.content_object = self.modified_object.__str__()
 
                 # Store the choice name, otherwise store original value
                 if (hasattr(self.original_object, 'get_' + str(field.name) + '_display') and
-                    hasattr(self.modified_object, 'get_' + str(field.name) + '_display')):
+                        hasattr(self.modified_object, 'get_' + str(field.name) + '_display')):
 
                     audit.old_value = getattr(self.original_object, 'get_%s_display' % field.name)()
                     audit.new_value = getattr(self.modified_object, 'get_%s_display' % field.name)()

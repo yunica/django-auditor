@@ -4,8 +4,8 @@ from .models import Auditor
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
-def admin(request, template_name='auditor/admin.html'):
 
+def admin(request, template_name='auditor/admin.html'):
     auditor_list = Auditor.objects.all()
 
     paginator = Paginator(auditor_list, 15)

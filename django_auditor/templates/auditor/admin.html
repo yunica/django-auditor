@@ -25,8 +25,8 @@
 			<td style="border: 1px solid #BBB;padding:4px">{{ audit.object_id }}</td>
 			<td style="border: 1px solid #BBB;padding:4px">{{ audit.content_object }}</td>
 			<td style="border: 1px solid #BBB;padding:4px">{{ audit.field }}</td>
-			<td style="border: 1px solid #BBB;padding:4px">{{ audit.old_value|default_if_none:"&nbsp;" }}</td>
-			<td style="border: 1px solid #BBB;padding:4px">{{ audit.new_value|default_if_none:"&nbsp;" }}</td>
+			<td style="border: 1px solid #BBB;padding:4px">{{ audit.old_value}}</td>
+			<td style="border: 1px solid #BBB;padding:4px">{{ audit.new_value }}</td>
 			<td style="border: 1px solid #BBB;padding:4px">{{ audit.user }}</td>
 			<td style="border: 1px solid #BBB;padding:4px">{{ audit.stamp }}</td>
 			{% if tenant %}
